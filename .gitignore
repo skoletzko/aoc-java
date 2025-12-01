@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+out/
+# IntelliJ / Eclipse
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# macOS/Linux artifacts
+.DS_Store
+*.swp
