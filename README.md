@@ -8,11 +8,20 @@ This repository provides a ready-to-use Java setup for solving [Advent of Code](
 src/
   main/java/aoc/framework     // puzzle abstractions + registry
   main/java/aoc/runner        // CLI entry point
-  main/java/aoc/advent2023    // yearly puzzle packages (sample Day 01 included)
+  main/java/aoc/advent2023    // yearly puzzle packages (teams organized per member)
+    sample/                   // example teammate namespace
   main/resources/inputs       // puzzle input files (organized by year/day)
 ```
 
-Add new puzzles under `src/main/java/aoc/advent<year>/` and register them inside `aoc.framework.PuzzleRegistry`.
+Add new puzzles under `src/main/java/aoc/advent<year>/<solver>/` (one folder per contributor) and register them inside `aoc.framework.PuzzleRegistry`.
+
+Run puzzles with:
+
+```bash
+./gradlew run --args "<year> [solver] <day> [part]"
+```
+
+If you omit `solver` the CLI falls back to the registry's default solver name (currently `sample`).
 
 ## Dockerized Gradle wrapper
 
@@ -29,8 +38,8 @@ Run Gradle tasks via the wrapper:
 ```bash
 ./gradlew clean
 ./gradlew test
-./gradlew run --args "2023 1"           # run both parts
-./gradlew run --args "2023 1 2"        # run part 2 only
+./gradlew run --args "2023 sample 1"    # run both parts for solver "sample"
+./gradlew run --args "2023 sample 1 2" # run part 2 only
 ```
 
 Open a shell inside the dev container if you want an interactive session:
@@ -43,7 +52,7 @@ Gradle caches are stored in the named volume `gradle-cache`, so builds remain fa
 
 ## Extending for more puzzles
 
-1. Create a new class (for example `aoc.advent2023.Day02`) that implements `aoc.framework.Puzzle`.
+1. Create a new class (for example `aoc.advent2023.alice.Day02`) that implements `aoc.framework.Puzzle`.
 2. Add the input file under `src/main/resources/inputs/<year>/dayXX.txt`.
-3. Register the puzzle inside `PuzzleRegistry#createDefault()`.
-4. Execute it with `./gradlew run --args "<year> <day> [part]"`.
+3. Register the puzzle inside `PuzzleRegistry#createDefault()` using `registry.register(year, "alice", day, AliceDay::new)`.
+4. Execute it with `./gradlew run --args "<year> alice <day> [part]"`.

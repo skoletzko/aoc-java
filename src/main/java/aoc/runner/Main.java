@@ -14,17 +14,24 @@ public final class Main {
             System.exit(1);
         }
 
-        int year = parseNumber(args[0], "year");
-        int day = parseNumber(args[1], "day");
-        String part = args.length >= 3 ? args[2].toLowerCase() : "both";
+        ParsedArguments parsed;
+        try {
+            parsed = parseArguments(args);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            printUsage();
+            System.exit(1);
+            return;
+        }
 
         Puzzle puzzle = PuzzleRegistry.createDefault()
-                .find(year, day)
-                .orElseThrow(() -> new IllegalArgumentException("No puzzle registered for %d day %d".formatted(year, day)));
+                .find(parsed.year(), parsed.solver(), parsed.day())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No puzzle registered for %d day %d (%s)".formatted(parsed.year(), parsed.day(), parsed.solver())));
 
-        List<String> input = InputLoader.read(year, day);
+        List<String> input = InputLoader.read(parsed.year(), parsed.day());
 
-        switch (part) {
+        switch (parsed.part()) {
             case "1", "part1" -> runPart("Part 1", () -> puzzle.solvePart1(input));
             case "2", "part2" -> runPart("Part 2", () -> puzzle.solvePart2(input));
             case "both" -> {
@@ -32,7 +39,7 @@ public final class Main {
                 runPart("Part 2", () -> puzzle.solvePart2(input));
             }
             default -> {
-                System.err.println("Unknown part: " + part);
+                System.err.println("Unknown part: " + parsed.part());
                 printUsage();
                 System.exit(1);
             }
@@ -52,8 +59,47 @@ public final class Main {
         }
     }
 
+    private static ParsedArguments parseArguments(String[] args) {
+        int year = parseNumber(args[0], "year");
+
+        String solver;
+        int dayIndex;
+        if (args.length >= 3 && !isNumber(args[1])) {
+            solver = args[1];
+            dayIndex = 2;
+        } else {
+            solver = PuzzleRegistry.DEFAULT_SOLVER;
+            dayIndex = 1;
+        }
+
+        if (args.length <= dayIndex) {
+            throw new IllegalArgumentException("Missing day argument");
+        }
+
+        int day = parseNumber(args[dayIndex], "day");
+        int partIndex = dayIndex + 1;
+        String part = args.length > partIndex ? args[partIndex].toLowerCase() : "both";
+
+        return new ParsedArguments(year, solver, day, part);
+    }
+
+    private static boolean isNumber(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return false;
+        }
+        for (int i = 0; i < raw.length(); i++) {
+            if (!Character.isDigit(raw.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private record ParsedArguments(int year, String solver, int day, String part) {}
+
     private static void printUsage() {
-        System.out.println("Usage: java -jar advent-of-java.jar <year> <day> [part]");
+        System.out.println("Usage: java -jar advent-of-java.jar <year> [solver] <day> [part]");
+        System.out.println("  solver is optional and defaults to '" + PuzzleRegistry.DEFAULT_SOLVER + "'.");
         System.out.println("  part can be 1, 2, or omitted (run both).");
     }
 }

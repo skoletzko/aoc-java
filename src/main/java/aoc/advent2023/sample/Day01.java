@@ -1,4 +1,4 @@
-package aoc.advent2023;
+package aoc.advent2023.sample;
 
 import java.util.ArrayList;
 import java.util.List;
