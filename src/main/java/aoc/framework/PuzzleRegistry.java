@@ -1,11 +1,9 @@
 package aoc.framework;
 
-import aoc.advent2023.sample.Day01;
-
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import java.util.Map;
 
 public final class PuzzleRegistry {
     public static final String DEFAULT_SOLVER = "sample";
@@ -39,7 +37,8 @@ public final class PuzzleRegistry {
 
     public static PuzzleRegistry createDefault() {
         PuzzleRegistry registry = new PuzzleRegistry();
-        registry.register(2023, "sample", 1, Day01::new);
+        registry.register(2023, "sample", 1, aoc.advent2023.sample.Day01::new);
+        registry.register(2025, "sk", 1, aoc.advent2025.sk.Day01::new);
         return registry;
     }
 }
