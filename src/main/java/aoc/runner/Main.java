@@ -29,7 +29,7 @@ public final class Main {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No puzzle registered for %d day %d (%s)".formatted(parsed.year(), parsed.day(), parsed.solver())));
 
-        List<String> input = InputLoader.read(parsed.year(), parsed.day());
+        List<String> input = InputLoader.read(parsed.year(), parsed.solver(), parsed.day());
 
         switch (parsed.part()) {
             case "1", "part1" -> runPart("Part 1", () -> puzzle.solvePart1(input));

@@ -33,7 +33,7 @@ public final class PuzzleRegistry {
         return year + ":" + normalizeSolver(solver) + ":" + day;
     }
 
-    private static String normalizeSolver(String solver) {
+    static String normalizeSolver(String solver) {
         return solver == null ? DEFAULT_SOLVER : solver.trim().toLowerCase();
     }
 

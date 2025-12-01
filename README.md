@@ -10,7 +10,7 @@ src/
   main/java/aoc/runner        // CLI entry point
   main/java/aoc/advent2023    // yearly puzzle packages (teams organized per member)
     sample/                   // example teammate namespace
-  main/resources/inputs       // puzzle input files (organized by year/day)
+  main/resources/inputs       // puzzle input files (organized by year/solver/day)
 ```
 
 Add new puzzles under `src/main/java/aoc/advent<year>/<solver>/` (one folder per contributor) and register them inside `aoc.framework.PuzzleRegistry`.
@@ -53,6 +53,6 @@ Gradle caches are stored in the named volume `gradle-cache`, so builds remain fa
 ## Extending for more puzzles
 
 1. Create a new class (for example `aoc.advent2023.alice.Day02`) that implements `aoc.framework.Puzzle`.
-2. Add the input file under `src/main/resources/inputs/<year>/dayXX.txt`.
+2. Add the input file under `src/main/resources/inputs/<year>/<solver>/dayXX.txt` (legacy `inputs/<year>/dayXX.txt` paths still load, but prefer solver folders).
 3. Register the puzzle inside `PuzzleRegistry#createDefault()` using `registry.register(year, "alice", day, AliceDay::new)`.
 4. Execute it with `./gradlew run --args "<year> alice <day> [part]"`.
