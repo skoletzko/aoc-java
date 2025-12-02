@@ -39,6 +39,7 @@ public final class PuzzleRegistry {
         PuzzleRegistry registry = new PuzzleRegistry();
         registry.register(2023, "sample", 1, aoc.advent2023.sample.Day01::new);
         registry.register(2025, "sk", 1, aoc.advent2025.sk.Day01::new);
+        registry.register(2025, "sk", 2, aoc.advent2025.sk.Day02::new);
         return registry;
     }
 }
