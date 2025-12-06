@@ -39,8 +39,9 @@ public final class PuzzleRegistry {
         PuzzleRegistry registry = new PuzzleRegistry();
         registry.register(2023, "sample", 1, aoc.advent2023.sample.Day01::new);
         registry.register(2025, "md", 1, aoc.advent2025.md.Day01::new);
-        registry.register(2025, "sk", 1, aoc.advent2025.sk.Day01::new);
         registry.register(2025, "md", 2, aoc.advent2025.md.Day02::new);
+        registry.register(2025, "md", 3, aoc.advent2025.md.Day02::new);
+        registry.register(2025, "sk", 1, aoc.advent2025.sk.Day01::new);
         registry.register(2025, "sk", 2, aoc.advent2025.sk.Day02::new);
         registry.register(2025, "sk", 3, aoc.advent2025.sk.Day03::new);
         registry.register(2025, "sk", 4, aoc.advent2025.sk.Day04::new);
