@@ -45,6 +45,7 @@ public final class PuzzleRegistry {
         registry.register(2025, "sk", 3, aoc.advent2025.sk.Day03::new);
         registry.register(2025, "sk", 4, aoc.advent2025.sk.Day04::new);
         registry.register(2025, "sk", 5, aoc.advent2025.sk.Day05::new);
+        registry.register(2025, "sk", 6, aoc.advent2025.sk.Day06::new);
 
         return registry;
     }
