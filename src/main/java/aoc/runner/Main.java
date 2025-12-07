@@ -4,8 +4,8 @@ import aoc.framework.Puzzle;
 import aoc.framework.PuzzleRegistry;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.Optional;
 import aoc.framework.InputLoader;
-
 
 public final class Main {
     public static void main(String[] args) {
@@ -27,9 +27,10 @@ public final class Main {
         Puzzle puzzle = PuzzleRegistry.createDefault()
                 .find(parsed.year(), parsed.solver(), parsed.day())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        "No puzzle registered for %d day %d (%s)".formatted(parsed.year(), parsed.day(), parsed.solver())));
+                        "No puzzle registered for %d day %d (%s)".formatted(parsed.year(), parsed.day(),
+                                parsed.solver())));
 
-        List<String> input = InputLoader.read(parsed.year(), parsed.solver(), parsed.day());
+        List<String> input = InputLoader.read(parsed.year(), parsed.solver(), parsed.day(), parsed.testing());
 
         switch (parsed.part()) {
             case "1", "part1" -> runPart("Part 1", () -> puzzle.solvePart1(input));
@@ -80,7 +81,24 @@ public final class Main {
         int partIndex = dayIndex + 1;
         String part = args.length > partIndex ? args[partIndex].toLowerCase() : "both";
 
-        return new ParsedArguments(year, solver, day, part);
+        int testingIndex = partIndex + 1;
+        Optional<Boolean> testing;
+
+        if (args.length > testingIndex) {
+            String testArg = args[testingIndex].toLowerCase();
+            // Check if the extra argument is explicitly "true" or "test"
+            if (testArg.equals("true") || testArg.equals("test")) {
+                testing = Optional.of(true);
+            } else {
+                // If another argument is present but not "true"/"test", treat it as false
+                testing = Optional.of(false);
+            }
+        } else {
+            // No extra argument provided, so the flag is absent
+            testing = Optional.empty();
+        }
+
+        return new ParsedArguments(year, solver, day, part, testing);
     }
 
     private static boolean isNumber(String raw) {
@@ -95,7 +113,8 @@ public final class Main {
         return true;
     }
 
-    private record ParsedArguments(int year, String solver, int day, String part) {}
+    private record ParsedArguments(int year, String solver, int day, String part, Optional<Boolean> testing) {
+    }
 
     private static void printUsage() {
         System.out.println("Usage: java -jar advent-of-java.jar <year> [solver] <day> [part]");

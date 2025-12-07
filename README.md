@@ -42,6 +42,13 @@ Run Gradle tasks via the wrapper:
 ./gradlew run --args "2023 sample 1 2" # run part 2 only
 ```
 
+If you add the test data to a special txt file (e.g. day03-test.txt) you can add this command
+
+```bash
+./gradlew run --args "2025 sample 1 both true"
+``` 
+This will execute the command with the test data provided.
+
 Open a shell inside the dev container if you want an interactive session:
 
 ```bash
