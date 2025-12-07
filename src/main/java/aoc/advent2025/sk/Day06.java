@@ -10,23 +10,7 @@ public final class Day06 implements Puzzle {
     @Override
     public String solvePart1(List<String> input) {
         long result = 0;
-        ProblemSet pset = parseInput(input);
-        for (Problem p : pset.getProblems()) {
-            long sol = p.calculateSolution();
-            result += sol;
-        }
 
-        return Long.toString(result);
-    }
-
-
-    @Override
-    public String solvePart2(List<String> input) {
-        long result = 0;
-        return Long.toString(result);
-    }
-
-    private ProblemSet parseInput(List<String> input) {
         ProblemSet pset = new ProblemSet();
         String s = input.get(0);
 
@@ -67,9 +51,57 @@ public final class Day06 implements Puzzle {
                 pset.getProblem(i).setOp(Operation.MUL);
             }
         }
+        for (Problem p : pset.getProblems()) {
+            long sol = p.calculateSolution();
+            result += sol;
+        }
 
-        return pset;
+        return Long.toString(result);
     }
+
+
+    @Override
+    public String solvePart2(List<String> input) {
+        long result = 0;
+        int rowLength = input.get(0).length();
+        ProblemSet pset = new ProblemSet();
+        Problem p = new Problem();
+        for (int i = rowLength - 1; i > -1; i--) {
+            String column = getColumnReverse(input, i);
+            if (column.isBlank()) {
+                pset.addProblem(p);
+                p = new Problem();
+                continue;
+            }
+            char c = column.charAt(0);
+            if (c == '+' || c == '*') {
+                column = column.substring(1);
+                if (c == '+') {
+                    p.setOp(Operation.ADD);
+                } else {
+                    p.setOp(Operation.MUL);
+                }
+            }
+            String columnRev = new StringBuilder(column).reverse().toString();
+            long arg = Long.parseLong(columnRev.strip());
+            p.addArg(arg);
+        }
+        pset.addProblem(p);
+        for (Problem _p : pset.getProblems()) {
+            long sol = _p.calculateSolution();
+            result += sol;
+        }
+        return Long.toString(result);
+    }
+
+    private String getColumnReverse(List<String> input, int colIdx) {
+        StringBuilder sb = new StringBuilder(input.size());
+        for (String row : input) {
+            sb.append(row.charAt(colIdx));
+        }
+        return sb.reverse().toString();
+    }
+
 }
 
 class ProblemSet {
@@ -98,6 +130,20 @@ class Problem {
 
     public Problem() {
         this.args = new ArrayList<Long>();
+    }
+
+    public String toString() {
+        String s = "[";
+        for (long arg : this.args) {
+            s += arg + ",";
+        }
+        if (this.op == Operation.ADD) {
+            s += "+";
+        } else {
+            s += "*";
+        }
+        s += "]";
+        return s;
     }
 
     public void addArg(long arg) {
