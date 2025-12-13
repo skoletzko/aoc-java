@@ -36,17 +36,12 @@ public final class Day08 implements Puzzle {
         List<Circuit> circuits = new ArrayList<Circuit>();
         int pairsConnected = 0;
         for (Pair p : pairsArray) {
+            // Hint: uncomment for part 2 solution
             if (pairsConnected == 1000) {
                 break;
             }
             JunctionBox a = p.first;
             JunctionBox b = p.second;
-            // System.out.printf(
-            //     "Connecting %s to %s with distance %d%n",
-            //     a,
-            //     b,
-            //     p.distance
-            // );
             pairsConnected++;
             if (a.circuit != null && b.circuit != null) {
                 if (a.circuit == b.circuit) {
@@ -54,6 +49,10 @@ public final class Day08 implements Puzzle {
                 } else {
                     // merge circuits
                     a.circuit.merge(b.circuit);
+                    if (checkIfAllConnected(b.circuit)) {
+                        System.out.printf("Part 2 solution: %d%n", a.x*b.x);
+                        break;
+                    }
                     continue;
                 }
             }
@@ -66,8 +65,18 @@ public final class Day08 implements Puzzle {
             }
             if (a.circuit != null) {
                 a.circuit.addBox(b);
+                // part 2
+                if (checkIfAllConnected(a.circuit)) {
+                    System.out.printf("Part 2 solution: %d%n", a.x*b.x);
+                    break;
+                }
             } else {
                 b.circuit.addBox(a);
+                // part 2
+                if (checkIfAllConnected(b.circuit)) {
+                    System.out.printf("Part 2 solution: %d%n", a.x*b.x);
+                    break;
+                }
             }
         }
 
@@ -81,8 +90,10 @@ public final class Day08 implements Puzzle {
 
     @Override
     public String solvePart2(List<String> input) {
-        long result = 0;
-        return Long.toString(result);
+        return "See comments in part 1 for 'part 2 soluttion'";
+    }
+    public boolean checkIfAllConnected(Circuit c) {
+        return c.size() == 1000;
     }
 }
 
@@ -113,9 +124,6 @@ class Circuit {
     }
     public void print() {
         System.out.println(this.circuit.keySet());
-        // for (String id: this.circuit.keySet()) {
-        //     System.out.print(id + ", ");
-        // }
     }
     public int size() {
         return this.circuit.size();
@@ -131,9 +139,9 @@ class Circuit {
 }
 
 class JunctionBox {
-    long x;
-    long y;
-    long z;
+    public long x;
+    public long y;
+    public long z;
     String id;
     public Circuit circuit;
 
