@@ -14,12 +14,22 @@ public final class InputLoader {
     private InputLoader() {
     }
 
-    public static List<String> read(int year, int day) {
-        return read(year, PuzzleRegistry.DEFAULT_SOLVER, day);
+    public static List<String> read(int year, int day, Optional<Boolean> testing) {
+        return read(year, PuzzleRegistry.DEFAULT_SOLVER, day, testing);
     }
 
-    public static List<String> read(int year, String solver, int day) {
+    public static List<String> read(int year, String solver, int day, Optional<Boolean> testing) {
         String normalizedSolver = PuzzleRegistry.normalizeSolver(solver);
+
+        boolean boolTest = testing.orElse(false);
+
+        if (boolTest) {
+            String testingPath = String.format("inputs/%d/%s/day%02d-test.txt", year, normalizedSolver, day);
+            Optional<InputStream> testStream = tryLoad(testingPath);
+            if (testStream.isPresent()) {
+                return readAll(testStream.get(), testingPath);
+            }
+        }
 
         String solverPath = String.format("inputs/%d/%s/day%02d.txt", year, normalizedSolver, day);
         Optional<InputStream> stream = tryLoad(solverPath);
