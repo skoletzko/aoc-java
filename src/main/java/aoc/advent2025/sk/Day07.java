@@ -17,19 +17,26 @@ public final class Day07 implements Puzzle {
         for (int i = 0; i < input.size(); i++) {
             grid.setLine(i, input.get(i));
         }
-        grid.print();
+        // grid.print();
         for (int k = 0; k < input.size()-1; k++) {
             grid.nextTick();
         }
-        grid.print();
+        // grid.print();
 
         return Integer.toString(grid.getSplits());
     }
 
     @Override
     public String solvePart2(List<String> input) {
-        long result = 0;
-        return Long.toString(result);
+        int result = 0;
+        int rows = input.size();
+        int cols = input.get(0).length();
+        LaserGrid grid = new LaserGrid(rows, cols);
+
+        for (int i = 0; i < input.size(); i++) {
+            grid.setLine(i, input.get(i));
+        }
+        return Integer.toString(grid.countTimelines());
     }
 }
 
@@ -45,6 +52,13 @@ class LaserGrid {
         this.cols = cols;
         this.currentRow = 0;
         this.grid = new Entity[rows][cols];
+    }
+
+    public LaserGrid(int rows, int cols, Entity[][] grid, int currentRow) {
+        this.rows = rows;
+        this.cols = cols;
+        this.grid = grid;
+        this.currentRow = currentRow;
     }
 
     public void setLine(int rowIdx, String line) {
@@ -84,6 +98,43 @@ class LaserGrid {
             }
         }
     }
+
+    private Entity[][] cloneGrid() {
+        Entity[][] clone = new Entity[this.rows][this.cols];
+        for (int i = 0; i < this.rows; i++) {
+            for (int k = 0; k < this.cols; k++) {
+                clone[i][k] = Entity.fromSymbol(this.get(i,k).getSymbol());
+            }
+        }
+        return clone;
+    }
+
+    public int countTimelines() {
+        this.currentRow++;
+        if (this.currentRow == this.rows) {
+            // this.print();
+            return 1;
+        }
+        for (int i = 0; i < this.cols; i++) {
+            if (this.getCol(i) == Entity.BEAM || this.getCol(i) == Entity.SPLITTER) {
+                continue;
+            }
+            Entity oneAbove = this.getColAbove(i, 1);
+            if (oneAbove == Entity.BEAM) {
+                this.setEntity(this.currentRow, i, '|');
+            }
+            if (oneAbove == Entity.SPLITTER) {
+                if (this.getColAbove(i, 2) == Entity.BEAM) {
+                    LaserGrid clone = new LaserGrid(this.rows, this.cols, this.cloneGrid(), this.currentRow);
+                    this.setEntity(this.currentRow, i-1, '|');
+                    clone.setEntity(this.currentRow, i+1, '|');
+                    return this.countTimelines() + clone.countTimelines();
+                }
+            }
+        }
+        return this.countTimelines();
+    }
+
     public int getSplits() {
         return this.splits;
     }
@@ -94,6 +145,9 @@ class LaserGrid {
 
     private Entity getColAbove(int col, int offset) {
         return this.grid[this.currentRow-offset][col];
+    }
+    private Entity get(int col, int row) {
+        return this.grid[col][row];
     }
 
 
